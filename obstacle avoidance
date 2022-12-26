@@ -1,14 +1,49 @@
 //#include "C:\Users\ankit\Documents\Arduino\libraries\mavlink\common\mavlink.h"  // Please change this path as in your system
 //I am using mavlink library
-#include <NewPing.h> // For the ultrasonic sensor
+/* #define UNKNOWN 0
+#define NEC 1
+#define SONY 2
+#define RC5 3
+#define RC6 4
+#define PANASONIC_OLD 5
+#define JVC 6
+#define NECX 7
+#define SAMSUNG36 8
+#define GICABLE 9 
+#define DIRECTV 10
+#define RCMM 11 */ IRLib supports 11 protocols directly and may include example code on how to implement others.
+
+#include <IRLibProtocols.h> for protocols
+#include <IRLibAll.h> for infrared sensors
 #include <SoftwareSerial.h> // Facilitates communication b/w Arduino and flight controller we are usnig
 #define MAX_DISTANCE  70 // maximum distance form obstacle in cm
 
+//======================= Recieving and Decoding IR =========================//
+//Create a receiver object to listen on pin 2
+IRrecvPCI myReceiver(2);
 
+//Create a decoder object 
+IRdecode myDecoder;   
+
+void setup() {
+  Serial.begin(9600);
+  delay(2000); while (!Serial); //delay for Leonardo
+  myReceiver.enableIRIn(); // Start the receiver
+  Serial.println(F("Ready to receive IR signals"));
+}
+
+void loop() {
+  //Continue looping until you get a complete signal received
+  if (myReceiver.getResults()) {
+    myDecoder.decode();           //Decode it
+    myDecoder.dumpResults(true);  //Now print results. Use false for less detail
+    myReceiver.enableIRIn();      //Restart receiver
+  }
+}
 //======================= GPIO pins intialization =========================//
 SoftwareSerial mySerial(10, 11); /// RX, TX
-NewPing sonar_B(3, 3, MAX_DISTANCE);
-NewPing sonar_F(4, 4, MAX_DISTANCE);
+recvGlobal sonar_B(3, 3, MAX_DISTANCE);
+recvGlobal sonar_F(4, 4, MAX_DISTANCE);
 
 
 //======================= Intitialize variables =========================//
@@ -32,9 +67,9 @@ void loop() {
     HeartbeatTime = millis();
     PIX_HEART_BEAT();//checks if the flight controller is working or not
   } 
-  TRIG_PITCH = sonar_F.ping_cm() + sonar_B.ping_cm(); // Checks the overall Pitch to confirm if obstacle is detetcted at either side of the drone !
-  FRONT_SENSOR = sonar_F.ping_cm(); //distance in cm // Gets's the distance from front facing sensor 
-  BACK_SENSOR = sonar_B.ping_cm(); //distance in cm // Gets's the distance from back facing sensor 
+  recvGlobal.front()+recvGlobal.back()=TRIG_PITCH; // Checks the overall Pitch to confirm if obstacle is detetcted at either side of the drone !
+  recvGlobal.front()=FRONT_SENSOR; //distance in cm // Gets's the distance from front facing sensor 
+  recvGlobal.back()=BACK_SENSOR; //distance in cm // Gets's the distance from back facing sensor 
   OUTPUT_DATA();
 }
 
