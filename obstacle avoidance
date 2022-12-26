@@ -1,5 +1,6 @@
 //#include "C:\Users\ankit\Documents\Arduino\libraries\mavlink\common\mavlink.h"  // Please change this path as in your system
 //I am using mavlink library
+// I am using IRremote library for infrared sensors
 /* #define UNKNOWN 0
 #define NEC 1
 #define SONY 2
