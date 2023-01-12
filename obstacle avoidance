@@ -74,7 +74,7 @@ void loop() {
   OUTPUT_DATA();
 }
 
-
+/*
 //======================= Sends data to Mavlink =========================//  
 uint8_t N = 0;
 void OUTPUT_DATA() {
@@ -89,7 +89,7 @@ void OUTPUT_DATA() {
 // I have devised this formula to calculate the PITCH-BACK and FRONT accordingly
 // The idea is, when an object is detected the distance is sent to function CALCULATE_PITCH(), which does the calculation of increasing the pitch values and decreasing it as values inputted from sensor.
 
-
+*/
 
 
 
@@ -113,7 +113,45 @@ void CALCULATE_PITCH(){
     }
 }
 
+//============================ADC PIN==================================//
+//Arduino Code for reading analog value
 
+int sensorPin = A0;  // input pin for the potentiometer
+int digitalValue = 0;// variable to store the value coming from the sensor
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalValue = analogRead(sensorPin);// read the value from the analog channel
+  Serial.print("digital value = ");
+  Serial.println(digitalValue);        //print digital value on serial monitor
+  delay(1000);
+}
+
+//Code for Read Analog Voltage using Arduino
+
+int sensorPin = A0;   // select the input pin for the potentiometer
+int digitalValue = 0;  // variable to store the value coming from the sensor
+float analogVoltage = 0.00;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalValue = analogRead(sensorPin);// read the value from the analog channel
+  Serial.print("digital value = ");
+  Serial.print(digitalValue);        //print digital value on serial monitor
+  //convert digital value to analog voltage
+  analogVoltage = (digitalValue * 5.00)/1023.00;
+  Serial.print("  analog voltage = ");
+  Serial.println(analogVoltage);
+  delay(1000);
+}
+
+/*
 //============================MAVLINK COMMAND==========================//
 mavlink_message_t msg;
 uint8_t buf[MAVLINK_MAX_PACKET_LEN];
@@ -139,3 +177,4 @@ void SEND_DATA(int P) {
       
   mySerial.write(buf, len);
 }
+*/
